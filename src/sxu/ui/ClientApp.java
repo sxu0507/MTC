@@ -1,7 +1,6 @@
 package sxu.ui;
 
 import java.awt.AWTException;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GradientPaint;
@@ -17,12 +16,20 @@ import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import sxu.module.RoundButton;
 import sxu.tools.CommonTools;
+
+import com.sun.awt.AWTUtilities;
 
 /**
  * 
@@ -36,6 +43,7 @@ public class ClientApp {
 
 	private JFrame frame;
 	private JPanel panel;
+	private JButton closeBtn;
 
 	/**
 	 * Launch the application.
@@ -65,13 +73,16 @@ public class ClientApp {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		
+		frame.setBounds(100, 100, 200, 250);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(200, 250);
-		frame.setUndecorated(true);
 		CommonTools.setWindowCenter(frame);
-		frame.getContentPane().setLayout(new BorderLayout(0, 0));
-		frame.setBackground(new Color(0, 0, 0));
+		frame.setUndecorated(true);
+		// 设置frame圆角
+		AWTUtilities.setWindowShape(frame,  
+		        new RoundRectangle2D.Double(0.0D, 0.0D, frame.getWidth(),  
+		        		frame.getHeight(), 8D, 8D));  
+		// 设置托盘图标及菜单
 		this.setTray();
 		// AWTUtilities.setWindowOpacity(frame, 0.9f);  // 设置透明
 		initContentPanel();
@@ -99,21 +110,52 @@ public class ClientApp {
 			public void paintComponent(Graphics g){  
                 Graphics2D g2d = (Graphics2D) g;  
                 g2d.setPaint(p);  
-                // 设置画笔颜色为白色  
-                g2d.setColor(new Color(215, 217, 219));  
+                g2d.setColor(new Color(215, 217, 219));
                 g2d.fillRect(0, 0, getWidth(), getHeight());  
                   
-                // 设置画笔颜色为蓝色  
                 g2d.setColor(new Color(115, 119, 127));  
                 Shape shape = null;  
-                shape = new RoundRectangle2D.Double(0, 0, frame.getWidth()-1, frame.getHeight()-1, 6.5D, 6.5D);  
+                shape = new RoundRectangle2D.Double(0, 0, frame.getWidth()-1, frame.getHeight()-1, 8D, 8D);  
                 g2d.draw(shape);          
-                  
             }  
 		};
 		frame.setContentPane(panel);
 		panel.setLayout(null);
+		
+//		closeBtn = new RoundButton("");
+//		closeBtn.setBounds(180, 5, 15, 15);
+//		closeBtn.setBorder(null);
+		
+		initCloseBtn();
 	}
+	
+	private void initCloseBtn() {
+		closeBtn = new JButton();
+		closeBtn.setBounds(180, 5, 15, 15);
+		ImageIcon icon= new ImageIcon("images/hui.png");
+		closeBtn.setIcon(icon);
+		closeBtn.setBorderPainted(false);
+		closeBtn.setContentAreaFilled(false); 
+		
+		closeBtn.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseExited(MouseEvent e) {  
+				ImageIcon ic = new ImageIcon("images/hui.png");
+				closeBtn.setIcon(ic);
+            }
+			
+			@Override  
+			public void mouseEntered(MouseEvent e) {  
+				ImageIcon ic = new ImageIcon("images/h.png");
+				closeBtn.setIcon(ic);
+            }
+
+		});
+		panel.add(closeBtn);
+	}
+	
+	
 	
 	/**
 	 *  
